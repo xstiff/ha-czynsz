@@ -1,0 +1,55 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Czynsz — tomojdom.pl",
+        "description": "Dane logowania do tomojdom.pl (numer użytkownika i hasło, nie e-mail).",
+        "data": {
+          "user": "Numer użytkownika",
+          "password": "Hasło"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Ponowne logowanie",
+        "description": "Hasło dla użytkownika {user} przestało działać — podaj aktualne.",
+        "data": {
+          "password": "Hasło"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Nieprawidłowy numer użytkownika lub hasło (albo wymagana zmiana hasła na stronie).",
+      "cannot_connect": "Nie udało się połączyć z tomojdom.pl.",
+      "invalid_user": "Numer użytkownika to liczba, np. z umowy lub wiadomości od zarządcy."
+    },
+    "abort": {
+      "already_configured": "To konto jest już dodane.",
+      "reauth_successful": "Zalogowano ponownie."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "oplata_miesieczna": {
+        "name": "Opłata miesięczna"
+      },
+      "do_zaplaty": {
+        "name": "Do zapłaty"
+      },
+      "saldo": {
+        "name": "Saldo"
+      },
+      "termin_platnosci": {
+        "name": "Termin płatności"
+      },
+      "ostatnie_rozliczenie": {
+        "name": "Ostatnie rozliczenie"
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Odśwież",
+      "description": "Pobiera od razu aktualne dane z tomojdom.pl."
+    }
+  }
+}

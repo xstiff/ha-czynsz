@@ -1,0 +1,12 @@
+{
+  "domain": "czynsz",
+  "name": "Czynsz (tomojdom.pl)",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/m-kowalik/ha-czynsz",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "0.1.0"
+}

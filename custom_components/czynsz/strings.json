@@ -1,0 +1,55 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Rent — tomojdom.pl",
+        "description": "tomojdom.pl credentials (user number and password, not e-mail).",
+        "data": {
+          "user": "User number",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate",
+        "description": "The password for user {user} no longer works — enter the current one.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid user number or password (or a password change is required on the website).",
+      "cannot_connect": "Cannot connect to tomojdom.pl.",
+      "invalid_user": "The user number must be numeric."
+    },
+    "abort": {
+      "already_configured": "This account is already configured.",
+      "reauth_successful": "Re-authentication successful."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "oplata_miesieczna": {
+        "name": "Monthly fee"
+      },
+      "do_zaplaty": {
+        "name": "Amount due"
+      },
+      "saldo": {
+        "name": "Balance"
+      },
+      "termin_platnosci": {
+        "name": "Due date"
+      },
+      "ostatnie_rozliczenie": {
+        "name": "Last settlement"
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Refresh",
+      "description": "Fetch current data from tomojdom.pl now."
+    }
+  }
+}
