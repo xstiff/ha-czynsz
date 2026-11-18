@@ -3,11 +3,13 @@
 Custom integration HA pobierająca opłaty za mieszkanie z tomojdom.pl (Weles3, Weles sp. z o.o.). Zasady współpracy: `~/Projects/homeassistant/CLAUDE.md`.
 
 ## Architektura (`custom_components/czynsz/`)
-- `api.py`: `TmdClient` (aiohttp) i czyste parsery (`parse_communities`, `parse_current_charges`, `parse_settlements`, `parse_ledger`) → `AccountData`. Kwoty jako float PLN (zaokrąglane do 2 miejsc).
+- `models.py`: dataclassy `Community`, `Document`, `Payment`, `AccountData`. Kwoty jako float PLN (zaokrąglane do 2 miejsc).
   - `AccountData.to_pay` = suma nadchodzących − saldo (≥ 0); `next_due` pomija pozycje pokryte nadpłatą; `last_settlement` = najnowszy dokument nie-zaliczka.
   - `Document.kind`: `zaliczka` (tytuł „Zaliczka …”), `rozliczenie` („Rozliczenie”/„korekt”), `inne`.
+- `parsers.py`: czyste parsery odpowiedzi (`parse_communities`, `parse_current_charges`, `parse_settlements`, `parse_ledger`) → modele. Bez I/O.
+- `client.py`: `TmdClient` (aiohttp), `TmdError`/`TmdAuthError`, `safe_base_url` (adres API z JWT tylko `https://*.tomojdom.pl`). Logowanie: tylko 400/401/403 = błąd uwierzytelnienia.
 - `coordinator.py`: co 6 h `async_fetch` (za każdym razem świeże logowanie). Widziane dokumenty w `Store` `.storage/czynsz.<entry_id>`; nowe nie-zaliczki → event `czynsz_new_settlement`. Pierwszy przebieg bez eventów.
-- `sensor.py`: 5 sensorów na wspólnotę (`WId`), urządzenie „Czynsz” (przy kilku wspólnotach z adresem).
+- `sensor.py`: 5 sensorów na wspólnotę (`WId`), bez IBAN — `do_zaplaty` ma atrybut `platnosc_url` (BLIK na tomojdom.pl), urządzenie „Czynsz” (przy kilku wspólnotach z adresem).
 - `config_flow.py`: numer użytkownika (int) + hasło, `unique_id` = `tmd_<numer>`, reauth (tylko hasło). Hasło w `entry.data`, bo JWT żyje 10 min.
 
 ## Nieoficjalne API tomojdom.pl (rozpoznane 2026-10-02 z JS `/jsnew/es/LoginTMD/*`, `/jsnew/es/TMDApp/*`)

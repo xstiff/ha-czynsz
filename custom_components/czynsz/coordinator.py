@@ -9,7 +9,8 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import AccountData, TmdAuthError, TmdClient, TmdError
+from .client import TmdAuthError, TmdClient, TmdError
+from .models import AccountData
 from .const import DOMAIN, EVENT_NEW_SETTLEMENT, PORTAL_URL, STORAGE_VERSION, UPDATE_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)

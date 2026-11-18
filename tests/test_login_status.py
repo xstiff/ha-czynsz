@@ -1,7 +1,7 @@
 """Kody HTTP przy logowaniu: tylko odrzucone dane to błąd uwierzytelnienia."""
 import pytest
 
-from czynsz.api import TmdAuthError, TmdClient, TmdError
+from czynsz.client import TmdAuthError, TmdClient, TmdError
 
 
 class _Resp:

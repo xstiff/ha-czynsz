@@ -12,7 +12,7 @@ from homeassistant.const import CONF_PASSWORD
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 
-from .api import TmdAuthError, TmdClient, TmdError
+from .client import TmdAuthError, TmdClient, TmdError
 from .const import CONF_USER, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)

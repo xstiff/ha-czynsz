@@ -9,7 +9,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
 
-from .api import TmdClient
+from .client import TmdClient
 from .const import CONF_USER, DOMAIN, SERVICE_REFRESH, STORAGE_VERSION
 from .coordinator import CzynszCoordinator
 

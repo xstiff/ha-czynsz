@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import CzynszConfigEntry
-from .api import AccountData
+from .models import AccountData
 from .const import DOMAIN, PAYMENT_URL, PORTAL_URL
 from .coordinator import CzynszCoordinator
 

@@ -13,10 +13,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from custom_components.czynsz.api import MAIN_URL, TmdAuthError, TmdClient
+from custom_components.czynsz.client import MAIN_URL, TmdAuthError, TmdClient
 from custom_components.czynsz.const import DOMAIN, EVENT_NEW_SETTLEMENT
 
-CLIENT = "custom_components.czynsz.api.TmdClient"
+CLIENT = "custom_components.czynsz.client.TmdClient"
 SERVER = "https://test.tomojdom.pl"
 
 

@@ -1,7 +1,8 @@
 """Testy parserów odpowiedzi tomojdom.pl."""
 from datetime import date
 
-from czynsz.api import AccountData, parse_communities, parse_current_charges, parse_ledger, parse_settlements
+from czynsz.models import AccountData
+from czynsz.parsers import parse_communities, parse_current_charges, parse_ledger, parse_settlements
 
 
 def build(tmd: dict) -> AccountData:
@@ -51,14 +52,14 @@ def test_no_upcoming_when_balance_covers_all(tmd):
 
 
 def test_safe_base_url_accepts_tomojdom():
-    from czynsz.api import safe_base_url
+    from czynsz.client import safe_base_url
     assert safe_base_url("https://taurus.tomojdom.pl") == "https://taurus.tomojdom.pl"
     assert safe_base_url("https://taurus.tomojdom.pl/app/") == "https://taurus.tomojdom.pl"
     assert safe_base_url("https://TAURUS.tomojdom.pl") == "https://taurus.tomojdom.pl"
 
 
 def test_safe_base_url_rejects_foreign_or_insecure():
-    from czynsz.api import MAIN_URL, safe_base_url
+    from czynsz.client import MAIN_URL, safe_base_url
     for bad in (None, "", 123, "http://taurus.tomojdom.pl", "https://evil.example.com",
                 "https://tomojdom.pl.evil.com", "https://eviltomojdom.pl", "https://x@evil.com/.tomojdom.pl"):
         assert safe_base_url(bad) == MAIN_URL, bad
