@@ -141,3 +141,22 @@ async def test_auth_error_starts_reauth(hass: HomeAssistant) -> None:
     assert entry.state is ConfigEntryState.SETUP_ERROR
     flows = hass.config_entries.flow.async_progress()
     assert flows and flows[0]["context"]["source"] == config_entries.SOURCE_REAUTH
+
+
+async def test_diagnostics_are_redacted(hass: HomeAssistant, aioclient_mock, tmd) -> None:
+    from custom_components.czynsz.diagnostics import async_get_config_entry_diagnostics
+
+    mock_api(aioclient_mock, tmd)
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    diag = await async_get_config_entry_diagnostics(hass, entry)
+    text = json.dumps(diag, default=str)
+    # dane logowania, właściciel, adres i numer konta nie mogą wyciec
+    for secret in ("1000001", "haslo", "Jan Testowy", "TESTOWA 1-3", "00000000000000000000000000"):
+        assert secret not in text, secret
+    # ale struktura i tytuły obciążeń zostają do diagnozy parserów
+    assert "Rozliczenie/korekta 1/KOR/26-06" in text
+    assert diag["accounts"][0]["monthly_components"]["Fundusz remontowy"] == 30.0
+    assert any(key.startswith("/app/api/RozliczeniaSzczegolowe") for key in diag["raw_responses"])

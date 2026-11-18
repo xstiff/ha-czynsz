@@ -61,6 +61,7 @@ class TmdClient:
         self._jwt: str | None = None
         self._cookie: str | None = None
         self._base: str | None = None
+        self.last_responses: dict[str, Any] = {}
 
     async def async_login(self) -> None:
         try:
@@ -110,9 +111,12 @@ class TmdClient:
                     return await self._call(path, payload, retry=False)
                 if resp.status != 200:
                     raise TmdError(f"{path}: HTTP {resp.status}")
-                return await resp.json(content_type=None)
+                body = await resp.json(content_type=None)
         except aiohttp.ClientError as err:
             raise TmdError(f"{path}: {err}") from err
+        # ostatnie surowe odpowiedzi — tylko do diagnostyki (diagnostics.py je anonimizuje)
+        self.last_responses[f"{path} {json.dumps(payload)}"] = body
+        return body
 
     async def async_fetch(self) -> dict[int, AccountData]:
         await self.async_login()
