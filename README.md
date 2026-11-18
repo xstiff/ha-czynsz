@@ -18,7 +18,7 @@ Dane odświeżane są co 6 h; natychmiast — akcją `czynsz.refresh`.
 | Encja | Opis |
 |---|---|
 | `sensor.czynsz_oplata_miesieczna` | bieżąca opłata miesięczna; atrybuty `od`, `skladniki` (media, eksploatacja, fundusz remontowy…) |
-| `sensor.czynsz_do_zaplaty` | kwota do zapłaty po uwzględnieniu nadpłaty; atrybuty `nadchodzace` (termin, kwota, tytuł), `konto`, `saldo` |
+| `sensor.czynsz_do_zaplaty` | kwota do zapłaty po uwzględnieniu nadpłaty; atrybuty `nadchodzace` (termin, kwota, tytuł), `saldo`, `platnosc_url` (link do płatności BLIK na tomojdom.pl) |
 | `sensor.czynsz_saldo` | saldo na dziś (dodatnie = nadpłata, ujemne = zaległość); data i kwota ostatniej wpłaty |
 | `sensor.czynsz_termin_platnosci` | najbliższy termin płatności niepokryty nadpłatą |
 | `sensor.czynsz_ostatnie_rozliczenie` | kwota ostatniego rozliczenia/korekty (ujemna = zwrot); atrybuty `tytul`, `miesiac`, `termin` |

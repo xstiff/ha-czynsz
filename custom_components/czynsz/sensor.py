@@ -14,7 +14,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import CzynszConfigEntry
 from .api import AccountData
-from .const import DOMAIN, PORTAL_URL
+from .const import DOMAIN, PAYMENT_URL, PORTAL_URL
 from .coordinator import CzynszCoordinator
 
 CURRENCY = "PLN"
@@ -59,7 +59,8 @@ SENSORS: tuple[CzynszSensorDescription, ...] = (
         native_unit_of_measurement=CURRENCY,
         suggested_display_precision=2,
         value_fn=lambda a: a.to_pay,
-        attrs_fn=lambda a: {"nadchodzace": _upcoming(a), "konto": a.iban, "saldo": a.balance},
+        # bez numeru konta (IBAN) — płatność przez BLIK na tomojdom.pl, link w `platnosc_url`
+        attrs_fn=lambda a: {"nadchodzace": _upcoming(a), "saldo": a.balance, "platnosc_url": PAYMENT_URL},
     ),
     CzynszSensorDescription(
         key="saldo",

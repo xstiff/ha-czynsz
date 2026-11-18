@@ -11,6 +11,7 @@ from datetime import date, datetime
 import json
 import logging
 from typing import Any
+from urllib.parse import urlparse
 
 import aiohttp
 
@@ -77,7 +78,6 @@ class AccountData:
     monthly_components: dict[str, float] = field(default_factory=dict)
     balance: float = 0.0  # dodatnie = nadpłata
     upcoming: list[tuple[date, float]] = field(default_factory=list)  # (termin, kwota do zapłaty)
-    iban: str | None = None
     last_payment: date | None = None
     last_booking: date | None = None
     documents: list[Document] = field(default_factory=list)  # od najnowszych
@@ -132,6 +132,23 @@ def jwt_claims(token: str) -> dict:
     return json.loads(base64.urlsafe_b64decode(payload))
 
 
+def safe_base_url(url: Any) -> str:
+    """Adres serwera API z claimu `url` JWT — tylko https://*.tomojdom.pl, inaczej serwer główny.
+
+    Na ten adres wysyłany jest token i ciasteczko `JWTPhrase`, więc nie ufamy niezweryfikowanemu
+    claimowi bez sprawdzenia schematu i domeny.
+    """
+    if not isinstance(url, str):
+        return MAIN_URL
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme != "https" or not (host == "tomojdom.pl" or host.endswith(".tomojdom.pl")):
+        if url:
+            _LOGGER.warning("Pomijam nieoczekiwany adres serwera API z tokenu: %s", url)
+        return MAIN_URL
+    return f"https://{host}" + (f":{parsed.port}" if parsed.port else "")
+
+
 def parse_communities(raw: list) -> list[Community]:
     result = []
     for owner in raw:
@@ -163,12 +180,10 @@ def parse_settlements(raw: list, account: AccountData) -> None:
     balance = 0.0
     upcoming: list[tuple[date, float]] = []
     last_payment = last_booking = None
-    iban = None
     for root in raw:
         for acc in _children(root):
-            # [iban, ?, saldo dziś, suma nadchodzących, ostatnia wpłata, [nazwy], ostatnie księgowanie]
+            # [konto, ?, saldo dziś, suma nadchodzących, ostatnia wpłata, [nazwy], ostatnie księgowanie]
             d = _data(acc)
-            iban = iban or d[0]
             balance += float(d[2] or 0)
             last_payment = max(filter(None, [last_payment, _date(d[4])]), default=None)
             last_booking = max(filter(None, [last_booking, _date(d[6])]), default=None)
@@ -178,7 +193,6 @@ def parse_settlements(raw: list, account: AccountData) -> None:
                     upcoming.append((due_date, round(-float(amount), 2)))
     account.balance = round(balance, 2)
     account.upcoming = sorted(upcoming)
-    account.iban = iban
     account.last_payment = last_payment
     account.last_booking = last_booking
 
@@ -224,7 +238,9 @@ class TmdClient:
                 headers={"Origin": ORIGIN, "Referer": f"{ORIGIN}/"},
                 timeout=TIMEOUT,
             ) as resp:
-                if 400 <= resp.status < 500:
+                # tylko odrzucenie danych logowania to błąd uwierzytelnienia; 429 (limit) i inne
+                # błędy 4xx/5xx są przejściowe i nie powinny wymuszać ponownego podania hasła
+                if resp.status in (400, 401, 403):
                     raise TmdAuthError(f"logowanie odrzucone (HTTP {resp.status})")
                 if resp.status != 200:
                     raise TmdError(f"logowanie: HTTP {resp.status}")
@@ -238,7 +254,7 @@ class TmdClient:
             raise TmdAuthError("tomojdom.pl wymaga zmiany hasła — zmień je na stronie")
         self._jwt = body[2]
         self._cookie = cookie.value if cookie else None
-        self._base = jwt_claims(self._jwt).get("url") or MAIN_URL
+        self._base = safe_base_url(jwt_claims(self._jwt).get("url"))
 
     async def _call(self, path: str, payload: Any = None, *, retry: bool = True) -> Any:
         if self._jwt is None:

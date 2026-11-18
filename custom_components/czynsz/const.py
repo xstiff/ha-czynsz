@@ -10,3 +10,4 @@ STORAGE_VERSION = 1
 EVENT_NEW_SETTLEMENT = "czynsz_new_settlement"
 SERVICE_REFRESH = "refresh"
 PORTAL_URL = "https://tomojdom.pl"
+PAYMENT_URL = "https://tomojdom.pl/app/"  # strona aplikacji — płatność BLIK / szybki przelew
